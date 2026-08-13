@@ -1,58 +1,117 @@
 import { useState, useEffect } from "react";
+import { supabase } from "../../supabase";
 import { type DataInicial } from "../types";
 
 export const useTasks = () => {
 
     // Estados de los datos de la app.-
-    const [tasks, setTasks] = useState<DataInicial[]>(() => {
-        const saved = localStorage.getItem('tareas');
-        return saved ? JSON.parse(saved) : [];
-    });
+    const [tasks, setTasks] = useState<DataInicial[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Se guardan los datos en el localStorage.-
+    // Obtener tareas.-
+    const fetchTasks = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const { data, error } = await supabase
+                .from('tasks')
+                .select('*')
+                .order('id', { ascending: false });
+            
+            if (error) throw error;
+
+            setTasks(data as DataInicial[]);
+        } catch (err: any) {
+            console.error('Error al cargar tareas: ', err.message);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Cargas las tareas al montar el componente.-
     useEffect(() => {
-        localStorage.setItem('tareas', JSON.stringify(tasks))
-    }, [tasks]);
+        fetchTasks();
+    }, []);
 
-    // Funcion para CREAR una tarea.-
-    const handleCreateTask = (newTaskData: Omit<DataInicial, 'id'>) => {
-        const created: DataInicial = {
-            ...newTaskData,
-            id: Date.now(),
-            status: 'Pendiente',
-        };
-        setTasks(prev => [...prev, created]);
+    // Crear Tareas.-
+    const handleCreateTask = async (newTaskData: Omit<DataInicial, 'id'>) => {
+        try {
+            setError(null);
+
+            const { data, error } = await supabase
+                .from('tasks')
+                .insert([newTaskData])
+                .select(); // Devuelve la fila insertada con su ID generado.-
+
+                if (error) throw error;
+
+                if (data) {
+                    // Agrega la tarea devuelta por la BD al estado local.-
+                    setTasks((prev) => [data[0] as DataInicial, ...prev]);
+                }
+        } catch (err: any) {
+            console.error('Error al crear tarea: ', err.message);
+            setError(err.message);
+        }
     };
 
-    // Funcion para EDITAR una tarea.-
-    const handleEditTask = (updatedTask: DataInicial) => {
-        setTasks(prev => prev.map(task =>
-            task.id === updatedTask.id ? updatedTask : task
-        ));
+    // Edita Tarea.-
+    const handleEditTask = async (updatedTask: DataInicial) => {
+        try {
+            setError(null);
+
+            const { error } = await supabase 
+                .from('tasks')
+                .update({
+                    title: updatedTask.title,
+                    category: updatedTask.category,
+                    priority: updatedTask.priority,
+                    status: updatedTask.status,
+                    createdAt: updatedTask.createdAt,
+                })
+                .eq('id', updatedTask.id); // Condicion WHERE id = updatedTask.id.-
+
+            if (error) throw error;
+
+            setTasks((prev) => 
+                prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+            );
+        } catch (err: any) {
+            console.error('Error al editar tarea: ', err.message);
+            setError(err.message);
+        }
     };
 
-    // Funcion para BORRAR una tarea.-
-    const handleDeleteTask = (id: number) => {
-        setTasks(prev => prev.filter(task => task.id !== id));
-    };
+    // Eliminar Tarea.-
+    const handleDeleteTask = async (id: number) => {
+        try {
+            setError(null);
 
-    // Funcion para cambiar el estado de una tarea.-
-    const handleToggleStatus = (id: number) => {
-        setTasks(prev => prev.map(task => {
-            if (task.id === id) {
-                const nextStatus = task.status === 'Pendiente' ? 'En Progreso' :
-                    task.status === 'En Progreso' ? 'Completada' : 'Pendiente';
-                return { ...task, status: nextStatus };
-            }
-            return task;
-        }));
+            const { error } = await supabase
+                .from('tasks')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            // Filtrar la tarea eliminada del estado local.-
+            setTasks((prev) => prev.filter((t) => t.id !== id));
+        } catch (err: any) {
+            console.error('Error al eliminar la tarea: ', err.message);
+            setError(err.message);
+        }
     };
 
     return {
         tasks,
+        loading,
+        error,
         handleCreateTask,
         handleEditTask,
         handleDeleteTask,
-        handleToggleStatus,
+        refreshTasks: fetchTasks,
     }
 }
