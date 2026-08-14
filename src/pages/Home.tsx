@@ -15,7 +15,7 @@ export const Home = () => {
         handleCreateTask,
         handleEditTask,
         handleDeleteTask,
-        refreshTasks
+        handleToggleStatus
     } = useTasks();
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -112,7 +112,7 @@ export const Home = () => {
                                 >
                                     <div className="flex items-start gap-3">
                                         <button
-                                            onClick={() => refreshTasks()}
+                                            onClick={() => handleToggleStatus(task.id)}
                                             className="mt-0.5 text-slate-300 hover:text-indigo-600 transition-colors"
                                             title="Cambiar estado"
                                         >
@@ -138,7 +138,7 @@ export const Home = () => {
 
                                     <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0">
                                         <button
-                                            onClick={() => refreshTasks()}
+                                            onClick={() => handleToggleStatus(task.id)}
                                             className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors cursor-pointer ${getStatusBadgeClass(task.status)}`}
                                         >
                                             {task.status}

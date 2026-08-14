@@ -8,6 +8,7 @@ export default function App() {
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const nombreDeUsuario = user?.user_metadata?.full_name || "Usuario";
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -31,7 +32,7 @@ export default function App() {
   return (
     <div>
       <header className="p-4 bg-white border-b border-slate-200 flex justify-between items-center">
-        <span className="text-sm font-medium text-slate-600">{user.email}</span>
+        <span className="text-sm font-medium text-slate-600">Hola, {nombreDeUsuario}</span>
         <button
           onClick={() => supabase.auth.signOut()}
           className="text-sm text-rose-600 hover:underline"
