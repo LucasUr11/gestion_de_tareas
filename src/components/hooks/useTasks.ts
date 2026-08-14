@@ -104,15 +104,38 @@ export const useTasks = () => {
         }
     };
 
-    const handleToggleStatus = (id: number) => {
-        setTasks(prev => prev.map(task => {
-            if (task.id === id) {
-                const nextStatus = task.status === 'Pendiente' ? 'En Progreso' :
-                    task.status === 'En Progreso' ? 'Completada' : 'Pendiente';
-                return { ...task, status: nextStatus };
-            }
-            return task;
-        }));
+    const handleToggleStatus = async (id: number) => {
+        try {
+            setError(null);
+
+            // Buscar la tarea actual en el estado local para saber su estado actual.-
+            const currentTask = tasks.find(t => t.id === id);
+            if (!currentTask) return;
+
+            // Calcular el siguiente estado.- 
+            const nextStatus = currentTask.status === 'Pendiente' ? 'En Progreso' :
+                currentTask.status === 'En Progreso' ? 'Completada' : 'Pendiente';
+            
+            // Impactar la base de datos en Supabase.-
+            const { error } = await supabase
+                .from('tasks')
+                .update({ status: nextStatus}) // Actualiza la columna 'status'.-
+                .eq('id', id);
+
+            if (error) throw error;
+
+            setTasks(prev => prev.map(task => {
+                if (task.id === id) {
+                    return { ...task, status: nextStatus };
+                }
+                return task;
+            }));
+            
+        } catch (err: any) {
+            console.error('Error en la actualizacion del estado: ', err.message);
+            setError(err.message);
+        }
+
     };
 
     return {
