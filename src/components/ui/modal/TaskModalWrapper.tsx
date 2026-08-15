@@ -54,10 +54,12 @@ export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWra
             onClose={onClose}
         >
             <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100">
+                <div className="w-full max-w-md mx-auto relative overflow-hidden z-10 bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 before:w-32 before:h-32 before:absolute before:bg-indigo-500/20 before:rounded-full before:-z-10 before:blur-2xl before:-top-10 before:-left-10 after:w-40 after:h-40 after:absolute after:bg-sky-400/20 after:rounded-full after:-z-10 after:blur-2xl after:-bottom-10 after:-right-10">
 
                     <div className="rounded-2xl text-center font-bold text-2xl text-indigo-600 max-w-md w-full p-6 border border-slate-100">
-                        <h2>{task ? 'Editar Tarea' : 'Crear Tarea'}</h2>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                            {task ? 'Editar Tarea' : 'Crear Tarea'}
+                        </h2>
                     </div>
 
                     <form
@@ -65,25 +67,25 @@ export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWra
                         className="flex flex-col mt-4 gap-4"
                     >
                         <div>
-                            <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Título de la Tarea</label>
+                            <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Título de la Tarea</label>
                             <input
                                 type="text"
                                 name="title"
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                 placeholder="Ej. Implementar módulo de facturación"
-                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
                                 required
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Categoría</label>
+                                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Categoría</label>
                                 <select
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white cursor-pointer"
+                                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all cursor-pointer"
                                 >
                                     <option value="Desarrollo">Desarrollo</option>
                                     <option value="Diseño">Diseño</option>
@@ -94,11 +96,11 @@ export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWra
                             </div>
 
                             <div>
-                                <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Prioridad</label>
+                                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Prioridad</label>
                                 <select
                                     value={formData.priority}
                                     onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white cursor-pointer"
+                                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all cursor-pointer"
                                 >
                                     <option value="Alta">Alta</option>
                                     <option value="Media">Media</option>
@@ -108,12 +110,12 @@ export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWra
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Fecha Límite</label>
+                            <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Fecha Límite</label>
                             <input
                                 type="date"
                                 value={formData.createdAt}
                                 onChange={(e) => setFormData({ ...formData, createdAt: e.target.value })}
-                                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm cursor-pointer"
+                                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all cursor-pointer"
                             />
                         </div>
 
@@ -121,13 +123,13 @@ export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWra
                             <button
                                 type="button"
                                 onClick={() => onClose()}
-                                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                                className="w-full mt-2 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-sky-500/10 transition-all focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 cursor-pointer text-sm"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
-                                className="px-4 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-sm cursor-pointer"
+                                className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-indigo-500/10 transition-all focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer text-sm"
                             >
                                 Guardar Tarea
                             </button>
