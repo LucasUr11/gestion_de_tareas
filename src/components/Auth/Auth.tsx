@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../supabase";
+import { Toaster, toast } from "react-hot-toast";
 
 export const Auth = () => {
 
@@ -7,11 +8,10 @@ export const Auth = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState<string | null>(null);
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
+        
 
         if (isRegister) {
             const { error } = await supabase.auth.signUp(
@@ -26,13 +26,12 @@ export const Auth = () => {
                 }
             );
 
-            if (error) setError(error.message);
-            else alert('¡Registro Existoso! Ahora podes Iniciar Sesión.');
+            if (error) toast.error(error.message);
+            else toast.success('¡Registro Existoso! Bienvenido.');
 
         } else {
             const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-            if (error) setError(error.message);
+            if (error) toast.error("Credenciales Invalidas");
         };
     };
 
@@ -51,11 +50,10 @@ export const Auth = () => {
                 </div>
 
                 {/* Alerta de Error */}
-                {error && (
-                    <div className="mb-5 p-3.5 bg-rose-50 text-rose-700 text-xs sm:text-sm rounded-xl border border-rose-200/80 flex items-center gap-2">
-                        <span>{error}</span>
-                    </div>
-                )}
+                <Toaster
+                    position="top-right"
+                    reverseOrder={false}
+                />
 
                 <form onSubmit={handleAuth} className="space-y-4">
                     {isRegister && (

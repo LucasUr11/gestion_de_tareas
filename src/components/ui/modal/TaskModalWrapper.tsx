@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal } from "./Modal";
 import { type DataInicial } from "../../types";
+import { Toaster, toast } from "react-hot-toast";
 
 interface TaskModalWrapperProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ const INITIAL_FORM_STATE: FormState = {
 
 export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWrapperProps) => {
     const [formData, setFormData] = useState<FormState>(INITIAL_FORM_STATE);
+    const Toast = () => toast.success("Tarea agregada correctamente.");
 
     useEffect(() => {
         if (task) {
@@ -61,7 +63,12 @@ export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWra
                             {task ? 'Editar Tarea' : 'Crear Tarea'}
                         </h2>
                     </div>
-
+                    
+                    <Toaster
+                        position="top-right"
+                        reverseOrder={true}
+                    />
+                    
                     <form
                         onSubmit={handleSubmit}
                         className="flex flex-col mt-4 gap-4"
@@ -128,6 +135,7 @@ export const TaskModalWrapper = ({ isOpen, onClose, task, onSave }: TaskModalWra
                                 Cancelar
                             </button>
                             <button
+                            onClick={Toast}
                                 type="submit"
                                 className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-indigo-500/10 transition-all focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer text-sm"
                             >

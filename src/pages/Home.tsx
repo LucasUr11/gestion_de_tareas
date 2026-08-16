@@ -6,6 +6,7 @@ import { type DataInicial } from "../components/types";
 import { TaskModalWrapper } from "../components/ui/modal/TaskModalWrapper";
 import { CardMetric } from "../components/Cards/CardsMetric";
 import { FilterAndSearch } from "../components/FilterAndSearch/FilterAndSearch";
+import { Toaster, toast } from "react-hot-toast";
 
 export const Home = () => {
 
@@ -24,6 +25,8 @@ export const Home = () => {
 
     const [editarTarea, setEditarTarea] = useState<DataInicial | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleToast = () => toast.success("Tarea eliminada correctamente.");
 
     // <---------- CREAR TAREA ( <<< ABREN EL MODAL UNICAMENTE >>>)  ---------->
     const handleStartCreate = () => {
@@ -82,6 +85,11 @@ export const Home = () => {
                         Nueva Tarea
                     </button>
                 </div>
+
+                <Toaster
+                    position="top-right"
+                    reverseOrder={true}
+                />
 
                 {/* Tarjetas de Métricas */}
                 <CardMetric tasks={tasks} />
@@ -157,7 +165,7 @@ export const Home = () => {
                                                 <IconEdit className="w-5 h-5" />
                                             </button>
                                             <button
-                                                onClick={() => handleDeleteTask(task.id)}
+                                                onClick={() => { handleDeleteTask(task.id); handleToast() }}
                                                 className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:bg-rose-100 rounded-lg transition-colors cursor-pointer"
                                                 title="Eliminar tarea"
                                             >
